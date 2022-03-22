@@ -1621,6 +1621,29 @@ Below are helper functions to convert bits to values and values to bits
 
 We can design such a function by **derivation**: take a specification, perform algebraic transformations, and arrive at a correct implementation
 
--
+- First state the specification of `interp-bits` as a function that uses `interp` to carry out evaluations and then converts to bits
+
+```lisp
+; Expr -> Bits
+> (define (interp-bits e)
+  (value->bits (interp e)))
+
+; Expr -> Bits
+(define (interp-bits e)
+  (value->bits
+   (match e
+     [(Int i) i]
+     [(Bool b) b]
+     [(Prim1 'add1 e0)
+      (add1 (interp e0))]
+     [(Prim1 'sub1 e0)
+      (sub1 (interp e0))]
+     [(Prim1 'zero? e0)
+      (zero? (interp e0))]
+     [(If e0 e1 e2)
+      (if (interp e0)
+          (interp e1)
+          (interp e2))])))
+```
 
 
